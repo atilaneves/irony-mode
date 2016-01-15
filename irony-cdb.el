@@ -194,10 +194,15 @@ returns the full path to file if found, or nil otherwise."
                               (cdar it))))))))
 
 (defun irony-cdb--remove-compiler-from-flags (flags)
-  "Removes the compiler from flags read from a compilation database.
+  "Remove the compiler from FLAGS read from a compilation database.
 
-In the future this might get more involved."
-  (cdr flags))
+When using ccache, the compiler might be present in FLAGS since the compiler is `ccache compiler'."
+  (let* ((flags (cdr flags))
+         (first (car flags))
+         (compilers '("gcc" "g++" "clang" "clang++" "icc"))
+         (first-is-compiler (member first compilers)))
+    (message (format "first-is? %s" first-is-compiler))
+    (if first-is-compiler (cdr flags) flags)))
 
 (provide 'irony-cdb)
 
